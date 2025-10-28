@@ -1,0 +1,144 @@
+Notaily
+
+
+REACTJS_SPRINGBOOT_TIPTAP
+DICEBEAR(avatar img)
+
+
+1. Mục tiêu của Project
+
+Tạo, chỉnh sửa, xóa ghi chú.
+
+Quản lý ghi chú theo nhóm (notebooks, pin, favourite).
+
+Cài nhắc nhở (reminder) cho ghi chú.
+
+Chia sẻ ghi chú cho người dùng khác.
+
+Quản lý hồ sơ cá nhân (profile).
+
+Có bin (thùng rác) để khôi phục ghi chú đã xóa
+
+2. Các module chức năng chính
+
+1️⃣ User Profile
+
+Xem thông tin cá nhân: tên, ảnh đại diện, email, số liên hệ, công ty.
+
+Chỉnh sửa thông tin: đổi tên, ảnh, thông tin liên hệ.
+
+Trạng thái: Active / Inactive.
+
+Giao diện: bảng (table) hiển thị danh sách user hoặc thông tin profile chi tiết.
+
+📸 Giao diện tham chiếu → hình đầu tiên bạn gửi (Profile Table).
+
+2️⃣ Notes Management
+
+Create / Edit / Delete Notes.
+
+Ghi chú có các trường:
+
+Title
+
+Description / Content
+
+ReminderDate
+
+Priority (Low, Medium, High)
+
+Icon
+
+Visibility → Only Me / Shared
+
+Khi tạo mới ghi chú, có preview bên phải hiển thị nội dung (xem hình thứ 2).
+
+📘 Hỗ trợ:
+
+Auto-save khi gõ.
+
+Rich text editor (Tiptap, Quill, hoặc Slate.js).
+
+Thêm tag hoặc icon để dễ phân loại.
+
+3️⃣ Your Notes
+
+Màn hình chính hiển thị tất cả các ghi chú của bạn.
+
+Gồm 4 tab:
+
+All Notes
+
+Shared Notes (ghi chú chia sẻ với người khác)
+
+Pin Notes (ghi chú ghim quan trọng)
+
+Favourite Notes (ghi chú yêu thích)
+
+Mỗi ghi chú hiển thị dạng card:
+
+Icon, tiêu đề, mô tả ngắn.
+
+Người tạo / người chia sẻ.
+
+Ngày tạo.
+
+Menu hành động: pin, edit, share, delete.
+
+📎 Giao diện tham chiếu → hình thứ 3 bạn gửi.
+
+4️⃣ Notebooks
+
+Cho phép gom nhóm ghi chú vào từng notebook (như folder).
+
+VD: Project Plans, Routine Notes, Planning.
+
+Mỗi notebook có thể chứa nhiều notes.
+
+📁 Giao diện tham chiếu → hình thứ 4 bạn gửi.
+
+5️⃣ Sharing
+
+Người dùng có thể chia sẻ ghi chú cho người khác bằng email / username.
+
+Có thể:
+
+“Only Me”
+
+“01 Share” (chia sẻ với 1 người)
+
+“03 Share” (nhiều người)
+
+Cấp quyền:
+
+Read
+
+Edit
+
+Owner
+
+6️⃣ Reminder
+
+Cho phép đặt ngày nhắc cho mỗi note.
+
+Khi tới ngày, hệ thống gửi notification hoặc email (nếu có backend).
+
+7️⃣ Bin (Recycle Bin)
+
+Khi người dùng xóa ghi chú → chuyển vào Bin.
+
+Có thể:
+
+Khôi phục (Restore).
+
+Xóa vĩnh viễn (Delete permanently).
+
+
+
+
+
+
+
+
+
+
