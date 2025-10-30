@@ -1,0 +1,52 @@
+import { FaBell, FaRegCircleQuestion, FaPen } from "react-icons/fa6";
+import avatar from "../../assets/images/avatar.png";
+import { useState } from "react";
+import "./HomeHeader.scss";
+
+function HomeHeader() {
+    const [menuStatus, setMenuStatus] = useState(false);
+    const [searchStatus, setSearchStatus] = useState(false);
+
+    const handleClickMenu = () => {
+        setMenuStatus(!menuStatus);
+    }
+
+    const handleClickSearch = () => {
+        setSearchStatus(!searchStatus);
+    }
+
+    return (
+        <>
+            <header className="header">
+                <div className="header__title">
+                    <FaPen className="header__title__icon" />
+                    <span>Write Your Note</span>
+                </div>
+                <div className="header__notification">
+                    <FaRegCircleQuestion className="header__icon " onClick={handleClickSearch} />
+                    <FaBell className="header__icon header__icon--bell" onClick={handleClickMenu} />
+
+                    {menuStatus ?
+                        <div className="header__dropdown-menu">
+                            <div className="header__card">
+                                <div className="header__sub-card">
+                                    <img src={avatar}></img>
+                                    <div className="header__info">
+                                        <h4>Name</h4>
+                                        <span>Muon ket ban voi ban</span>
+                                        <div className="dropdown-menu__action">
+                                            <button className="dropdown-menu__action__button--accept">Agree</button>
+                                            <button className="dropdown-menu__action__button--reject">Decline</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> : ``
+                    }
+                </div>
+            </header>
+        </>
+    )
+}
+
+export default HomeHeader;

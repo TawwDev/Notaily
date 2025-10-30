@@ -2,7 +2,21 @@ import { NavLink, Outlet } from 'react-router-dom';
 import logo from '../../assets/images/logo.jpg';
 import avatar from '../../assets/images/avatar.png'
 import "./SideBar.scss";
+import { FaUserPen, FaUser, FaNoteSticky, FaRegClock, FaRegTrashCan, FaFolderOpen, FaPenToSquare  } from "react-icons/fa6";
+import { useState } from "react";
 function SideBar() {
+    const [noteBookStatus, setNoteBookStatus] = useState(false);
+    const handleClickNotesBook = () => {
+        setNoteBookStatus(!noteBookStatus);
+    }
+    const navLinkOptionLinkActive = (e) => {
+        return e.isActive ? "sidebar__link sidebar__link--active" : "sidebar__link";
+    }
+
+    const navLinkOptionSubLinkActive = (e) => {
+        return e.isActive ? "sidebar__sublink sidebar__sublink--active" : "sidebar__sublink";
+    }
+
     return (
         <>
             <div className="layout-default__sidebar">
@@ -23,52 +37,63 @@ function SideBar() {
                         </div>
                         <div className='sidebar__profile--dropdown-menu'>
                             <NavLink to={"/user-profile"}>
+                                <FaUser className='sidebar__profile__icon'/>
                                 <span>My Profile</span>
                             </NavLink>
                             <NavLink to={"/edit-profile"}>
+                                <FaUserPen className='sidebar__profile__icon'/>
                                 <span>Edit Profile</span>
                             </NavLink>
                         </div>
                     </div>
                     <nav className="sidebar__nav">
                         <ul className="sidebar__menu">
-                            <li className="sidebar__item sidebar__item--active">
-                                <NavLink to="/" className="sidebar__link">
+                            <li className="sidebar__item" >
+                                <NavLink to="/" className={navLinkOptionLinkActive}>
+                                    <FaPenToSquare />
                                     <span>Your Notes</span>
                                 </NavLink>
                             </li>
 
                             <li className="sidebar__item">
-                                <div className="sidebar__header">
+                                <div className={`sidebar__header ${noteBookStatus ? "sidebar__header--active" : ""}`} onClick={handleClickNotesBook}>
+                                    <FaFolderOpen />
                                     <span>Notesbook</span>
                                 </div>
-                                <ul className="sidebar__submenu">
-                                    <li className="sidebar__subitem">
-                                        <NavLink to="/project-plans" className="sidebar__sublink">
-                                            <span>Project Plans</span>
-                                        </NavLink>
-                                    </li>
-                                    <li className="sidebar__subitem">
-                                        <NavLink to="/routine-notes" className="sidebar__sublink">
-                                            <span>Routine Notes</span>
-                                        </NavLink>
-                                    </li>
-                                    <li className="sidebar__subitem">
-                                        <NavLink to="/planning" className="sidebar__sublink">
-                                            <span>Planning</span>
-                                        </NavLink>
-                                    </li>
-                                </ul>
+                                {noteBookStatus ?
+                                    <ul className="sidebar__submenu">
+                                        <li className="sidebar__subitem">
+                                            <NavLink to="/project-plans" className={navLinkOptionSubLinkActive}>
+                                                <FaNoteSticky />
+                                                <span>Project Plans</span>
+                                            </NavLink>
+                                        </li>
+                                        <li className="sidebar__subitem">
+                                            <NavLink to="/routine-notes" className={navLinkOptionSubLinkActive}>
+                                                <FaNoteSticky />
+                                                <span>Routine Notes</span>
+                                            </NavLink>
+                                        </li>
+                                        <li className="sidebar__subitem">
+                                            <NavLink to="/planning" className={navLinkOptionSubLinkActive}>
+                                                <FaNoteSticky />
+                                                <span>Planning</span>
+                                            </NavLink>
+                                        </li>
+                                    </ul> : ""
+                                }
                             </li>
 
                             <li className="sidebar__item">
-                                <NavLink to="/reminder" className="sidebar__link">
+                                <NavLink to="/reminder" className={navLinkOptionLinkActive}>
+                                    <FaRegClock />
                                     <span>Reminder</span>
                                 </NavLink>
                             </li>
 
                             <li className="sidebar__item">
-                                <NavLink to="/bin" className="sidebar__link">
+                                <NavLink to="/bin" className={navLinkOptionLinkActive}>
+                                    <FaRegTrashCan />
                                     <span>Bin</span>
                                 </NavLink>
                             </li>

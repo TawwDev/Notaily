@@ -65,6 +65,11 @@ $color-danger: #f5365c;
         margin-bottom: 32px;
         position: relative;
 
+        &__icon {
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
         &--flex-row {
             display: flex;
             align-items: center;
@@ -145,14 +150,14 @@ $color-danger: #f5365c;
     &__item {
         margin-bottom: 8px;
 
-        &--active {
-            .sidebar__link {
-                color: $color-text;
-                background-color: $color-hover;
-                border-radius: 6px;
-                font-weight: 500;
-            }
-        }
+        // &--active {
+        //     .sidebar__link {
+        //         color: $color-text;
+        //         background-color: $color-hover;
+        //         border-radius: 6px;
+        //         font-weight: 500;
+        //     }
+        // }
     }
 
     &__link,
@@ -173,6 +178,11 @@ $color-danger: #f5365c;
         }
     }
 
+    &__link--active {
+        background-color: $color-hover;
+        color: $color-text;
+    }
+
     &__header {
         padding: 8px 16px;
         font-weight: 500;
@@ -183,6 +193,11 @@ $color-danger: #f5365c;
 
         &:hover{
             color: $color-text;
+        }
+
+        &--active {
+            color: $color-text;
+            background-color: $color-hover;
         }
     }
 
@@ -205,9 +220,18 @@ $color-danger: #f5365c;
         border-radius: 6px;
         transition: all 0.2s;
 
+        span {
+            margin-left: 5px;
+        }
+        
         &:hover {
             color: $color-text;
             background-color: $color-hover;
+        }
+
+        &--active{
+            background-color: $color-hover;
+        color: $color-text;
         }
     }
 }
