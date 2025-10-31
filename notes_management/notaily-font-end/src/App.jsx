@@ -8,6 +8,9 @@ import RoutineNotesPage from "./pages/NoteBooksPage/RoutineNotesPage";
 import PlanningPage from "./pages/NoteBooksPage/PlanningPage";
 import ReminderPage from "./pages/ReminderPage/ReminderPage";
 import BinPage from "./pages/BinPage/BinPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import ForgotPassWordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
+import SignUpPage from "./pages/SignUpPage/SignUpPage";
 
 function App() {
   return (
@@ -23,7 +26,11 @@ function App() {
           <Route path="planning" element={<PlanningPage />} />
           <Route path="reminder" element={<ReminderPage />} />
           <Route path="bin" element={<BinPage />} />
+        
         </Route>
+        <Route path="login" element={<LoginPage/>} />
+        <Route path="forgot-password" element={<ForgotPassWordPage/>} />
+        <Route path="sign-up" element={<SignUpPage/>} />
       </Routes>
 
     </>
