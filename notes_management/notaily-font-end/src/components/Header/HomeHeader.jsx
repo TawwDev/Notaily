@@ -2,10 +2,13 @@ import { FaBell, FaRegCircleQuestion, FaPen } from "react-icons/fa6";
 import avatar from "../../assets/images/avatar.png";
 import { useState } from "react";
 import "./HomeHeader.scss";
+import { NavLink, Outlet } from "react-router-dom";
+import CreateNote from "../CreateNote/CreateNote";
 
 function HomeHeader() {
     const [menuStatus, setMenuStatus] = useState(false);
     const [searchStatus, setSearchStatus] = useState(false);
+    const [createNoteStatus, setCreateNoteStatus] = useState(false);
 
     const handleClickMenu = () => {
         setMenuStatus(!menuStatus);
@@ -15,10 +18,14 @@ function HomeHeader() {
         setSearchStatus(!searchStatus);
     }
 
+    const handleClickCreateNote = () => {
+        setCreateNoteStatus(!createNoteStatus);
+    }
+
     return (
         <>
             <header className="header">
-                <div className="header__title">
+                <div className="header__title" onClick={handleClickCreateNote}>
                     <FaPen className="header__title__icon" />
                     <span>Write Your Note</span>
                 </div>
@@ -45,6 +52,10 @@ function HomeHeader() {
                     }
                 </div>
             </header>
+            
+            {createNoteStatus ? <CreateNote/> : ""}
+                
+            
         </>
     )
 }

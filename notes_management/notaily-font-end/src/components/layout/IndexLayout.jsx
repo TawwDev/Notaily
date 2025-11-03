@@ -6,7 +6,7 @@ import HomeHeader from "../Header/HomeHeader";
 
 
 function IndexLayout() {
-
+    
 
     return (
         <>

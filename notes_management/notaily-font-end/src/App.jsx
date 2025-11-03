@@ -11,13 +11,16 @@ import BinPage from "./pages/BinPage/BinPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import ForgotPassWordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
+import CreateNote from "./components/CreateNote/CreateNote";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path='/' element={<IndexLayout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage />}>
+            <Route path="/create-note" element={<CreateNote/>}/>
+          </Route>
           <Route path="user-profile" element={<ProfilePage/>} />
           <Route path="edit-profile" element={<EditProfilePage/>} />
           {/* <Route path="/" element={<HomePage />} /> */}
@@ -26,7 +29,7 @@ function App() {
           <Route path="planning" element={<PlanningPage />} />
           <Route path="reminder" element={<ReminderPage />} />
           <Route path="bin" element={<BinPage />} />
-        
+
         </Route>
         <Route path="login" element={<LoginPage/>} />
         <Route path="forgot-password" element={<ForgotPassWordPage/>} />

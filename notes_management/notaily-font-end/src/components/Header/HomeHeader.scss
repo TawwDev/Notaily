@@ -28,6 +28,7 @@ $color-danger: #ec5353;
     &__title {
         &:hover {
             cursor: pointer;
+
             .header__title__icon {
                 color: $color-text;
             }
@@ -40,7 +41,7 @@ $color-danger: #ec5353;
         &__icon {
             margin-right: 5px;
         }
-        
+
         span {
             font-size: 18px;
         }
@@ -76,7 +77,7 @@ $color-danger: #ec5353;
         min-width: 300px;
         border-radius: 8px;
         padding: 15px;
-        
+
         &__action {
             display: flex;
             flex-direction: row;
