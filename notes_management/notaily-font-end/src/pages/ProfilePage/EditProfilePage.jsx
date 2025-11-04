@@ -1,7 +1,7 @@
 function EditProfilePage() {
     return (
         <>
-            EditProfilePage
+            
         </>
     )
 }

@@ -70,13 +70,18 @@ $color-danger: #f5365c;
             margin-right: 5px;
         }
 
+        &__icon-size {
+            font-size: 21px;
+        }
+
         &--flex-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             cursor: pointer;
             padding: 8px;
             border-radius: 8px;
+            gap: 8px;
 
             &:hover {
                 background-color: $color-hover;
@@ -92,6 +97,7 @@ $color-danger: #f5365c;
                 margin: 0;
                 font-size: 18px;
                 font-weight: 500;
+                word-break: break-word;
             }
         }
 

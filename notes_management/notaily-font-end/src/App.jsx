@@ -12,28 +12,33 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import ForgotPassWordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import CreateNote from "./components/CreateNote/CreateNote";
+import ProfileLayout from "./components/layout/ProfileLayout";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={<IndexLayout />}>
-          <Route path="/" element={<HomePage />}>
-            <Route path="/create-note" element={<CreateNote/>}/>
-          </Route>
-          <Route path="user-profile" element={<ProfilePage/>} />
-          <Route path="edit-profile" element={<EditProfilePage/>} />
-          {/* <Route path="/" element={<HomePage />} /> */}
-          <Route path="project-plans" element={<ProjectPlansPage/>} />
+        {/* ====================== AUTHENTICATION ====================== */}
+        <Route path="login" element={<LoginPage />} />
+        <Route path="forgot-password" element={<ForgotPassWordPage />} />
+        <Route path="sign-up" element={<SignUpPage />} />
+
+        {/* ====================== IndexLayout ====================== */}
+        <Route path="/" element={<IndexLayout />}>
+          <Route index element={<HomePage />} />
+          {/* <Route path="create-note" element={<CreateNote />} /> */}
+          <Route path="project-plans" element={<ProjectPlansPage />} />
           <Route path="routine-notes" element={<RoutineNotesPage />} />
           <Route path="planning" element={<PlanningPage />} />
           <Route path="reminder" element={<ReminderPage />} />
           <Route path="bin" element={<BinPage />} />
-
         </Route>
-        <Route path="login" element={<LoginPage/>} />
-        <Route path="forgot-password" element={<ForgotPassWordPage/>} />
-        <Route path="sign-up" element={<SignUpPage/>} />
+
+        {/* ====================== ProfileLayout ====================== */}
+        <Route path="/profile" element={<ProfileLayout />}>
+          <Route index element={<ProfilePage />} />
+          <Route path="edit-profile" element={<EditProfilePage />} />
+        </Route>
       </Routes>
 
     </>

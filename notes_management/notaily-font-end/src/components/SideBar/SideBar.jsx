@@ -2,8 +2,9 @@ import { NavLink, Outlet } from 'react-router-dom';
 import logo from '../../assets/images/logo.jpg';
 import avatar from '../../assets/images/avatar.png'
 import "./SideBar.scss";
-import { FaUserPen, FaUser, FaNoteSticky, FaRegClock, FaRegTrashCan, FaFolderOpen, FaPenToSquare  } from "react-icons/fa6";
+import { FaUserPen, FaUser, FaNoteSticky, FaRegClock, FaRegTrashCan, FaFolderOpen, FaPenToSquare } from "react-icons/fa6";
 import { useState } from "react";
+import { MdKeyboardArrowDown } from "react-icons/md";
 function SideBar() {
     const [noteBookStatus, setNoteBookStatus] = useState(false);
     const handleClickNotesBook = () => {
@@ -30,18 +31,18 @@ function SideBar() {
                     </div>
 
                     <div className='sidebar__profile'>
-                        <div className={"sidebar__profile--flex-row"}>
+                        <div className="sidebar__profile--flex-row">
                             <img src={avatar}></img>
-                            <h6>Bud Wiser</h6>
-                            {/* icon dropdown */}
+                            <h6>Bud Wisers</h6>
+                            <MdKeyboardArrowDown className='sidebar__profile__icon-size' />
                         </div>
                         <div className='sidebar__profile--dropdown-menu'>
-                            <NavLink to={"/user-profile"}>
-                                <FaUser className='sidebar__profile__icon'/>
+                            <NavLink to={"/profile"}>
+                                <FaUser className='sidebar__profile__icon' />
                                 <span>My Profile</span>
                             </NavLink>
-                            <NavLink to={"/edit-profile"}>
-                                <FaUserPen className='sidebar__profile__icon'/>
+                            <NavLink to={"/profile/edit-profile"}>
+                                <FaUserPen className='sidebar__profile__icon' />
                                 <span>Edit Profile</span>
                             </NavLink>
                         </div>
