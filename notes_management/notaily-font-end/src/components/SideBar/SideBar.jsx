@@ -37,11 +37,17 @@ function SideBar() {
                             <MdKeyboardArrowDown className='sidebar__profile__icon-size' />
                         </div>
                         <div className='sidebar__profile--dropdown-menu'>
-                            <NavLink to={"/profile"}>
+                            <NavLink
+                                to={"/profile"}
+                                state={{ headerValue: "My Profile" }}
+                            >
                                 <FaUser className='sidebar__profile__icon' />
                                 <span>My Profile</span>
                             </NavLink>
-                            <NavLink to={"/profile/edit-profile"}>
+                            <NavLink
+                                to={"/profile/edit-profile"}
+                                state={{ headerValue: "Edit Profile" }}
+                            >
                                 <FaUserPen className='sidebar__profile__icon' />
                                 <span>Edit Profile</span>
                             </NavLink>

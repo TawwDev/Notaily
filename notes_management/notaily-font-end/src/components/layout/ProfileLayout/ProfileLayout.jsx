@@ -1,12 +1,12 @@
 
-import SideBar from "../SideBar/SideBar";
-import { Outlet } from 'react-router-dom';
-import "./IndexLayout.scss";
-import HomeHeader from "../Header/HomeHeader";
+import ProfileHeader from "../../Header/ProfileHeader/ProfileHeader";
+import SideBar from "../../SideBar/SideBar";
+import { Outlet, useLocation} from 'react-router-dom';
 
 
 function ProfileLayout() {
-    
+    const location = useLocation();
+    const headerValue = location.state?.headerValue || "Use Profile";
 
     return (
         <>
@@ -15,6 +15,9 @@ function ProfileLayout() {
                     <SideBar />
                 </div>
                 <div className="layout-default__content">
+                    <ProfileHeader
+                        headerValue={headerValue}
+                    />
                     <main className="layout-default__main">
                         <Outlet />
                     </main>
@@ -22,7 +25,6 @@ function ProfileLayout() {
                         Copyright @Nguyen Minh Tam
                     </footer>
                 </div>
-
             </div>
         </>
     )

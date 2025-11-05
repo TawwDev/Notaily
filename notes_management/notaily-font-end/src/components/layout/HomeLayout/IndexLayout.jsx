@@ -1,8 +1,8 @@
 
-import SideBar from "../SideBar/SideBar";
+import SideBar from "../../SideBar/SideBar";
 import { Outlet } from 'react-router-dom';
 import "./IndexLayout.scss";
-import HomeHeader from "../Header/HomeHeader";
+import HomeHeader from "../../Header/HomeHeader/HomeHeader";
 
 
 function IndexLayout() {

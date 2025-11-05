@@ -1,9 +1,7 @@
 import { FaBell, FaRegCircleQuestion, FaPen } from "react-icons/fa6";
-import avatar from "../../assets/images/avatar.png";
 import { useState } from "react";
 import "./HomeHeader.scss";
-import { NavLink, Outlet } from "react-router-dom";
-import CreateNote from "../CreateNote/CreateNote";
+import CreateNote from "../../CreateNote/CreateNote";
 
 function HomeHeader() {
     const [menuStatus, setMenuStatus] = useState(false);
@@ -37,7 +35,7 @@ function HomeHeader() {
                         <div className="header__dropdown-menu">
                             <div className="header__card">
                                 <div className="header__sub-card">
-                                    <img src={avatar}></img>
+                                    <img src={"https://api.dicebear.com/9.x/croodles/svg?seed=default"}></img>
                                     <div className="header__info">
                                         <h4>Name</h4>
                                         <span>Muon ket ban voi ban</span>

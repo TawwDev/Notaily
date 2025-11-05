@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import IndexLayout from "./components/layout/IndexLayout"
+import IndexLayout from "./components/layout/HomeLayout/IndexLayout"
 import HomePage from './pages/HomePage';
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import EditProfilePage from "./pages/ProfilePage/EditProfilePage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage/ProfilePage";
+import EditProfilePage from "./pages/ProfilePage/EditProfile/EditProfilePage";
 import ProjectPlansPage from "./pages/NoteBooksPage/ProjectPlansPage";
 import RoutineNotesPage from "./pages/NoteBooksPage/RoutineNotesPage";
 import PlanningPage from "./pages/NoteBooksPage/PlanningPage";
@@ -11,8 +11,7 @@ import BinPage from "./pages/BinPage/BinPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import ForgotPassWordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
-import CreateNote from "./components/CreateNote/CreateNote";
-import ProfileLayout from "./components/layout/ProfileLayout";
+import ProfileLayout from "./components/layout/ProfileLayout/ProfileLayout";
 
 function App() {
   return (
