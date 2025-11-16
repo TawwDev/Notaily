@@ -17,7 +17,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "User not found!"),
     USERNAME_INVALID(400, "Username is invalid!"),
     PASSWORD_INVALID(400, "Password is invalid!"),
-    ID_INVALID(400, "Id is invalid!");
+    ID_INVALID(400, "Id is invalid!"),
+    UNAUTHENTICATED(401, "Unauthenticated!");
     private int code;
     private String message;
 }
