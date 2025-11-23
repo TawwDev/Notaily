@@ -1,27 +1,42 @@
 package notaily.notaily_backend.exception;
 
-import notaily.notaily_backend.constant.ErrorCode;
+import notaily.notaily_backend.enums.ErrorCode;
 import notaily.notaily_backend.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class GlobalExceptionHandle{
+public class GlobalExceptionHandle {
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingException(Exception ex) {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode())
+                .body(ApiResponse.builder()
+                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
+                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(ErrorCode.UNAUTHORIZED.getStatusCode())
+                .body(ApiResponse.builder()
+                        .code(ErrorCode.UNAUTHORIZED.getCode())
+                        .message(ErrorCode.UNAUTHORIZED.getMessage())
+                        .build()
+                );
     }
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingRuntimeException(AppException ex) {
         ErrorCode errorCode = ex.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode())
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build()
+                );
     }
 }

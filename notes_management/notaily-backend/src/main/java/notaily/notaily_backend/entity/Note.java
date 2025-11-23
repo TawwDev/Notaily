@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import notaily.notaily_backend.constant.Priority;
-import notaily.notaily_backend.constant.UserStatus;
-import notaily.notaily_backend.constant.Visibility;
+import notaily.notaily_backend.enums.Priority;
+import notaily.notaily_backend.enums.Visibility;
 
 import java.time.LocalDate;
 

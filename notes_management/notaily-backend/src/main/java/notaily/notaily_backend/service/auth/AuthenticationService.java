@@ -10,18 +10,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import notaily.notaily_backend.constant.ErrorCode;
+import notaily.notaily_backend.enums.ErrorCode;
 import notaily.notaily_backend.dto.request.auth.AuthenticationRequest;
 import notaily.notaily_backend.dto.request.auth.IntrospectRequest;
 import notaily.notaily_backend.dto.request.auth.UserCreationRequest;
 import notaily.notaily_backend.dto.response.auth.AuthenticationResponse;
 import notaily.notaily_backend.dto.response.auth.IntrospectResponse;
 import notaily.notaily_backend.entity.User;
+import notaily.notaily_backend.enums.Role;
 import notaily.notaily_backend.exception.AppException;
 import notaily.notaily_backend.mapper.UserMapper;
 import notaily.notaily_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.StringJoiner;
 
 @Slf4j
 @Service
@@ -38,10 +41,13 @@ import java.util.Date;
 public class AuthenticationService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     @NonFinal
-    protected static final String SIGNER_KEY = "f71eeca2901b446b2d0358b36f54c03876de413d4b93ed869f8591ffb0bf0a60";
+    @Value("${jwt.signerKey}")
+    protected String SIGNER_KEY;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
         var token = request.getToken();
 
@@ -63,12 +69,11 @@ public class AuthenticationService {
                 .orElseGet(() -> userRepository.findByEmail(request.getUsername())
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getHashedPassword());
         if(!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-        var token= generateToken(request.getUsername());
+        var token= generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -76,19 +81,19 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(String username) {
+    private String generateToken(User user) {
         //header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         //payload
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("notaily.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("customClaim", "Custom")
+                .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
@@ -102,6 +107,14 @@ public class AuthenticationService {
         }
     }
 
+    private String buildScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if(user.getRoles() != null && !user.getRoles().isEmpty()) {
+            user.getRoles().forEach(stringJoiner::add);
+        }
+        return stringJoiner.toString();
+    }
+
     public User createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
@@ -110,10 +123,15 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
         User user = userMapper.userCreationMapToUser(request);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
+        user.setHashedPassword(passwordEncoder.encode(request.getPassword()));
         user.setDisplayName(request.getFirstName() + " " + request.getLastName());
         user.setCreatedDate(LocalDate.now());
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        user.setRoles(roles);
+
         return userRepository.save(user);
     }
 }

@@ -1,6 +1,7 @@
 package notaily.notaily_backend.controller.auth;
 
 import com.nimbusds.jose.JOSEException;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -45,7 +46,7 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/sign-up")
     ApiResponse<User> createUser(@RequestBody UserCreationRequest request) {
         return ApiResponse.<User>builder()
                 .code(201)

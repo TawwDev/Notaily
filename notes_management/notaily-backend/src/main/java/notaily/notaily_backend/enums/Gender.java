@@ -1,4 +1,4 @@
-package notaily.notaily_backend.constant;
+package notaily.notaily_backend.enums;
 
 public enum Gender {
     MALE,

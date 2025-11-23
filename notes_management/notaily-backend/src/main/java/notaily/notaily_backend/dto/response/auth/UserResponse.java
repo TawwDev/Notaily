@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import notaily.notaily_backend.constant.Gender;
+import notaily.notaily_backend.enums.Gender;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
@@ -26,4 +27,5 @@ public class UserResponse {
     private String avatarUrl;
     private LocalDate createdDate;
     private LocalDate updatedDate;
+    private Set<String> roles;
 }

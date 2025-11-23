@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import notaily.notaily_backend.constant.Permission;
-import notaily.notaily_backend.constant.ShareStatus;
+import notaily.notaily_backend.enums.Permission;
+import notaily.notaily_backend.enums.ShareStatus;
 
 import java.time.LocalDate;
 

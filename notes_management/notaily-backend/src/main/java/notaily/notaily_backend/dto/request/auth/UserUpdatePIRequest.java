@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import notaily.notaily_backend.constant.Gender;
+import notaily.notaily_backend.enums.Gender;
 
 import java.time.LocalDate;
 

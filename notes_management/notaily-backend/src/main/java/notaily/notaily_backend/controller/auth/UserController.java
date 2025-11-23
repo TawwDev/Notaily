@@ -1,5 +1,6 @@
 package notaily.notaily_backend.controller.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import notaily.notaily_backend.dto.request.auth.UserCreationRequest;
 import notaily.notaily_backend.dto.request.auth.UserUpdatePIRequest;
 import notaily.notaily_backend.dto.response.ApiResponse;
@@ -8,12 +9,14 @@ import notaily.notaily_backend.entity.User;
 import notaily.notaily_backend.mapper.UserMapper;
 import notaily.notaily_backend.service.auth.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -21,11 +24,26 @@ public class UserController {
     private UserMapper userMapper;
 
     @GetMapping
-    ApiResponse<List<User>> getUsers() {
-        ApiResponse<List<User>> response = new ApiResponse<>();
+    ApiResponse<List<UserResponse>> getUsers() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("UserName: {}", authentication.getName());
+        authentication.getAuthorities().forEach(authority -> {
+            log.info(authority.getAuthority());
+        });
+
+        ApiResponse<List<UserResponse>> response = new ApiResponse<>();
         response.setCode(200);
         response.setResult(userService.getAllUsers());
         return response;
+    }
+
+
+    @GetMapping("/my-info")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
     }
 
     @GetMapping("{id}")

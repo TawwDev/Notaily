@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import notaily.notaily_backend.constant.Gender;
-import notaily.notaily_backend.constant.UserStatus;
+import notaily.notaily_backend.enums.Gender;
+import notaily.notaily_backend.enums.UserStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -45,6 +46,8 @@ public class User {
     private String avatarUrl;
     private LocalDate createdDate;
     private LocalDate updatedDate;
+    private Set<String> roles;
+
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
@@ -60,4 +63,6 @@ public class User {
 
     @OneToMany(mappedBy = "sharedWithUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Share> sharesReceived = new ArrayList<>();
+
+
 }
