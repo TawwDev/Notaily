@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import notaily.notaily_backend.entity.Role;
 import notaily.notaily_backend.enums.ErrorCode;
 import notaily.notaily_backend.dto.request.auth.AuthenticationRequest;
 import notaily.notaily_backend.dto.request.auth.IntrospectRequest;
@@ -17,9 +18,10 @@ import notaily.notaily_backend.dto.request.auth.UserCreationRequest;
 import notaily.notaily_backend.dto.response.auth.AuthenticationResponse;
 import notaily.notaily_backend.dto.response.auth.IntrospectResponse;
 import notaily.notaily_backend.entity.User;
-import notaily.notaily_backend.enums.Role;
+import notaily.notaily_backend.enums.RoleEnum;
 import notaily.notaily_backend.exception.AppException;
 import notaily.notaily_backend.mapper.UserMapper;
+import notaily.notaily_backend.repository.RoleRepository;
 import notaily.notaily_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,6 +44,7 @@ public class AuthenticationService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -110,7 +113,14 @@ public class AuthenticationService {
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
         if(user.getRoles() != null && !user.getRoles().isEmpty()) {
-            user.getRoles().forEach(stringJoiner::add);
+            user.getRoles().forEach(role -> {
+                stringJoiner.add("ROLE_" + role.getName());
+                if(role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+                    role.getPermissions().forEach(permission -> {
+                        stringJoiner.add(permission.getName());
+                    });
+                }
+            });
         }
         return stringJoiner.toString();
     }
@@ -127,9 +137,9 @@ public class AuthenticationService {
         user.setDisplayName(request.getFirstName() + " " + request.getLastName());
         user.setCreatedDate(LocalDate.now());
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-
+        Role userRole = roleRepository.findById(RoleEnum.USER.name()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(userRole);
         user.setRoles(roles);
 
         return userRepository.save(user);

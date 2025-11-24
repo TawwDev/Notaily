@@ -21,6 +21,7 @@ public enum ErrorCode {
     ID_INVALID(400, "Id is invalid!", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(401, "Unauthenticated!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403, "You do not have permission!", HttpStatus.FORBIDDEN),
+    ROLE_NOT_FOUND(404, "Role not found!", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

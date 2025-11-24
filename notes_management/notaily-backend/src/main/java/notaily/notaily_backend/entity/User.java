@@ -35,7 +35,6 @@ public class User {
     private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
     private Gender gender;
 
     @Column(unique = true, nullable = false)
@@ -46,7 +45,14 @@ public class User {
     private String avatarUrl;
     private LocalDate createdDate;
     private LocalDate updatedDate;
-    private Set<String> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "role_name", nullable = false)
+    )
+    private Set<Role> roles;
 
 
     @Enumerated(EnumType.STRING)
@@ -61,7 +67,7 @@ public class User {
     @OneToMany(mappedBy = "sharedByUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Share> sharesSent = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sharedWithUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sharedWithUser", cascade = CascadeType.ALL)
     private List<Share> sharesReceived = new ArrayList<>();
 
 

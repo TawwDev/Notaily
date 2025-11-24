@@ -1,4 +1,4 @@
-package notaily.notaily_backend.dto.response.auth;
+package notaily.notaily_backend.dto.request.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,10 +14,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private String id;
-    private String username;
-    private String hashedPassword;
+public class UserUpdateRequest {
+    private String password;
     private String displayName;
     private String firstName;
     private String lastName;
@@ -28,5 +26,5 @@ public class UserResponse {
     private String avatarUrl;
     private LocalDate createdDate;
     private LocalDate updatedDate;
-    private Set<Role> roles;
+    private Set<String> roles;
 }

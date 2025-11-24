@@ -4,12 +4,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import notaily.notaily_backend.dto.request.auth.UserUpdateRequest;
 import notaily.notaily_backend.enums.ErrorCode;
 import notaily.notaily_backend.dto.request.auth.UserUpdatePIRequest;
 import notaily.notaily_backend.dto.response.auth.UserResponse;
 import notaily.notaily_backend.entity.User;
 import notaily.notaily_backend.exception.AppException;
 import notaily.notaily_backend.mapper.UserMapper;
+import notaily.notaily_backend.repository.RoleRepository;
 import notaily.notaily_backend.repository.UserRepository;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -26,10 +30,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('APPROVE_GET')")
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(userMapper::userToUserResponse).toList();
     }
@@ -41,6 +47,7 @@ public class UserService {
         );
     }
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -49,34 +56,23 @@ public class UserService {
         return userMapper.userToUserResponse(user);
     }
 
-    @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponse updateUserAvatarById(String id, String avatarURL) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        user.setUpdatedDate(LocalDate.now());
-        user.setAvatarUrl(avatarURL);
-        return userMapper.userToUserResponse(userRepository.save(user));
-    }
+    public UserResponse updateUser(String userId, UserUpdateRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-    @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponse updateUserPasswordUserById(String id, String password) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        user.setUpdatedDate(LocalDate.now());
-        user.setHashedPassword(passwordEncoder.encode(password));
-        return userMapper.userToUserResponse(userRepository.save(user));
-    }
+        userMapper.updateUser(user, request);
 
-    @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponse updateUserPIById(String id, UserUpdatePIRequest request) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        user.setUpdatedDate(LocalDate.now());
-
-        if (!user.getEmail().equals(request.getEmail())) {
-            if (userRepository.existsByEmail(request.getEmail())) {
-                throw new AppException(ErrorCode.EMAIL_EXISTED);
-            }
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setHashedPassword(passwordEncoder.encode(request.getPassword()));
         }
-        userMapper.updatePIRequest(user, request);
-        return userMapper.userToUserResponse(userRepository.save(user));
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            var roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new HashSet<>(roles));
+        }
+
+        user.setUpdatedDate(LocalDate.now());
+        userRepository.save(user);
+
+        return userMapper.userToUserResponse(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
