@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import notaily.notaily_backend.dto.request.auth.AuthenticationRequest;
 import notaily.notaily_backend.dto.request.auth.IntrospectRequest;
+import notaily.notaily_backend.dto.request.auth.LogoutRequest;
 import notaily.notaily_backend.dto.request.auth.UserCreationRequest;
 import notaily.notaily_backend.dto.response.ApiResponse;
 import notaily.notaily_backend.dto.response.auth.AuthenticationResponse;
@@ -51,6 +52,15 @@ public class AuthenticationController {
         return ApiResponse.<User>builder()
                 .code(201)
                 .result(authenticationService.createUser(request))
+                .build();
+    }
+
+    @PostMapping("/log-out")
+    ApiResponse<Void> logoutUser(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
+                .code(201)
+                .message("Successfully logged out!")
                 .build();
     }
 

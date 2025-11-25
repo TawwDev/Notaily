@@ -14,6 +14,7 @@ import notaily.notaily_backend.mapper.RoleMapper;
 import notaily.notaily_backend.repository.PermissionRepository;
 import notaily.notaily_backend.repository.RoleRepository;
 import notaily.notaily_backend.repository.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -28,7 +29,7 @@ public class RoleService {
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     public RoleResponse createRole(RoleRequest request) {
         var role = roleMapper.toRole(request);
 
@@ -39,6 +40,7 @@ public class RoleService {
         return roleMapper.toRoleResponse(role);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<RoleResponse> getRoles() {
         var roles = roleRepository.findAll();
         return roles
@@ -47,6 +49,7 @@ public class RoleService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteRole(String roleId) {
         roleRepository.deleteById(roleId);
     }

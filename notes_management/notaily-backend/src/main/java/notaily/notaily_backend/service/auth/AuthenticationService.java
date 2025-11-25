@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import notaily.notaily_backend.dto.request.auth.LogoutRequest;
+import notaily.notaily_backend.entity.InvalidatedToken;
 import notaily.notaily_backend.entity.Role;
 import notaily.notaily_backend.enums.ErrorCode;
 import notaily.notaily_backend.dto.request.auth.AuthenticationRequest;
@@ -21,8 +23,10 @@ import notaily.notaily_backend.entity.User;
 import notaily.notaily_backend.enums.RoleEnum;
 import notaily.notaily_backend.exception.AppException;
 import notaily.notaily_backend.mapper.UserMapper;
+import notaily.notaily_backend.repository.InvalidatedTokenRepository;
 import notaily.notaily_backend.repository.RoleRepository;
 import notaily.notaily_backend.repository.UserRepository;
+import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +39,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -44,7 +49,8 @@ public class AuthenticationService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
+    RoleRepository roleRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -53,17 +59,16 @@ public class AuthenticationService {
     @PreAuthorize("hasRole('ADMIN')")
     public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
         var token = request.getToken();
+        boolean isValid = true;
 
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-
-        SignedJWT signedJWT = SignedJWT.parse(token);
-
-        Date expTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-        var verified = signedJWT.verify(verifier);
+        try {
+            verifyToken(token);
+        } catch (AppException e) {
+            isValid = false;
+        }
 
         return IntrospectResponse.builder()
-                .valid(verified && expTime.after(new Date()))
+                .valid(isValid)
                 .build();
     }
 
@@ -73,10 +78,10 @@ public class AuthenticationService {
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getHashedPassword());
-        if(!authenticated) {
+        if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-        var token= generateToken(user);
+        var token = generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -84,6 +89,13 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * Tạo JWT access token cho user.
+     * Token có thời hạn 1 ngày, chứa jti (để blacklist khi logout) và scope (quyền).
+     *
+     * @param user người dùng đã được xác thực
+     * @return chuỗi JWT đã được ký
+     */
     private String generateToken(User user) {
         //header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
@@ -94,8 +106,9 @@ public class AuthenticationService {
                 .issuer("notaily.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()
                 ))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -110,12 +123,69 @@ public class AuthenticationService {
         }
     }
 
+    /**
+     * Đăng xuất người dùng: đưa token vào danh sách đen (blacklist).
+     * Token vẫn còn hạn nhưng sẽ bị từ chối ở JwtDecoder nhờ validator tùy chỉnh.
+     *
+     * @param request chứa token cần thu hồi
+     */
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signerToken = verifyToken(request.getToken());
+
+        String jit = signerToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signerToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expiryTime(expiryTime)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    /**
+     * Xác minh tính hợp lệ của một JWT token.
+     * Kiểm tra:
+     * - Chữ ký có đúng không
+     * - Token chưa hết hạn
+     * - Token chưa bị đưa vào blacklist
+     *
+     * @param token chuỗi JWT
+     * @return SignedJWT nếu hợp lệ
+     * @throws AppException nếu token không hợp lệ
+     */
+    public SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier);
+
+        if (!(verified && expTime.after(new Date()))) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        return signedJWT;
+    }
+
+    /**
+     * Xây dựng chuỗi scope từ roles và permissions của user.
+     * Ví dụ: "ROLE_USER READ_PROFILE WRITE_POST"
+     *
+     * @param user người dùng
+     * @return chuỗi scope cách nhau bởi dấu cách
+     */
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if(user.getRoles() != null && !user.getRoles().isEmpty()) {
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             user.getRoles().forEach(role -> {
                 stringJoiner.add("ROLE_" + role.getName());
-                if(role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+                if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
                     role.getPermissions().forEach(permission -> {
                         stringJoiner.add(permission.getName());
                     });

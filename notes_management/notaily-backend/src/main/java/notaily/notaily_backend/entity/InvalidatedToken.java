@@ -1,12 +1,10 @@
 package notaily.notaily_backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import lombok.*;
 
-import java.util.Set;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -14,8 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Permission {
+public class InvalidatedToken {
     @Id
-    private String name;
-    private String description;
+    private String id;
+    private Date expiryTime;
 }

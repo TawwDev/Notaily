@@ -19,6 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 
+/**
+ * Khởi tạo dữ liệu ban đầu khi ứng dụng khởi động:
+ * - Tạo 2 role: USER và ADMIN (nếu chưa tồn tại)
+ * - Tạo tài khoản admin mặc định: username = "admin", password = "admin"
+ *
+ * Chỉ chạy một lần khi ứng dụng khởi động lần đầu.
+ * Nếu đã có admin → bỏ qua (idempotent).
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor

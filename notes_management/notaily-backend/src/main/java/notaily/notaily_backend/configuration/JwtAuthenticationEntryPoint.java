@@ -13,6 +13,20 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    /**
+     * Xử lý lỗi khi người dùng truy cập tài nguyên bảo vệ mà:
+     * - Chưa đăng nhập (không có token)
+     * - Token hết hạn
+     * - Token bị thu hồi (blacklist)
+     * - Token không hợp lệ (chữ ký sai, định dạng sai,...)
+     *
+     * Thay vì để Spring trả về response mặc định (401 + HTML hoặc JSON thô),
+     * trả về response JSON thống nhất với format ApiResponse của hệ thống.
+     *
+     * Được đăng ký trong SecurityConfig:
+     * {@code .authenticationEntryPoint(new JwtAuthenticationEntryPoint())}
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
