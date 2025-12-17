@@ -5,8 +5,13 @@ import "./SideBar.scss";
 import { FaUserPen, FaUser, FaNoteSticky, FaRegClock, FaRegTrashCan, FaFolderOpen, FaPenToSquare } from "react-icons/fa6";
 import { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { ImExit } from "react-icons/im";
+import { apiAuth } from '../../api/AuthenticationApi';
+import { useNavigate } from "react-router-dom";
 function SideBar() {
     const [noteBookStatus, setNoteBookStatus] = useState(false);
+    const navigate = useNavigate();
+
     const handleClickNotesBook = () => {
         setNoteBookStatus(!noteBookStatus);
     }
@@ -16,6 +21,17 @@ function SideBar() {
 
     const navLinkOptionSubLinkActive = (e) => {
         return e.isActive ? "sidebar__sublink sidebar__sublink--active" : "sidebar__sublink";
+    }
+
+    const handleLogout = async () => {
+        try {
+            const response = await apiAuth.logOut();
+            console.log("Logout success", response);
+
+            setTimeout(() => navigate("/login"), 1000);
+        } catch (err) {
+            alert.error("Logout fail");
+        }
     }
 
     return (
@@ -51,6 +67,10 @@ function SideBar() {
                                 <FaUserPen className='sidebar__profile__icon' />
                                 <span>Edit Profile</span>
                             </NavLink>
+                            <div onClick={handleLogout}>
+                                <ImExit className='sidebar__profile__icon' />
+                                <span>Logout</span>
+                            </div>
                         </div>
                     </div>
                     <nav className="sidebar__nav">

@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import ForgotPassWordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import ProfileLayout from "./components/layout/ProfileLayout/ProfileLayout";
+import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="forgot-password" element={<ForgotPassWordPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
+
 
         {/* ====================== IndexLayout ====================== */}
         <Route path="/" element={<IndexLayout />}>
@@ -38,6 +40,7 @@ function App() {
           <Route index element={<ProfilePage />} />
           <Route path="edit-profile" element={<EditProfilePage />} />
         </Route>
+
       </Routes>
 
     </>
