@@ -16,6 +16,7 @@
     "@tiptap/starter-kit": "^3.10.1",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
+    "intro.js": "^8.3.2",
     "react": "^19.1.1",
     "react-datepicker": "^8.8.0",
     "react-dom": "^19.1.1",

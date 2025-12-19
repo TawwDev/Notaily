@@ -68,7 +68,7 @@ $color-danger: #ec5353;
 
     &__dropdown-menu {
         position: absolute;
-        top: 120%;
+        top: 150%;
         right: 0;
         border: 1px solid $color-border;
         background-color: $color-white;
@@ -111,7 +111,7 @@ $color-danger: #ec5353;
         align-items: flex-start;
         text-align: left;
 
-        h4 {
+        h5 {
             margin-bottom: 5px;
             color: $color-text;
         }
@@ -149,4 +149,24 @@ $color-danger: #ec5353;
             background-color: red;
         }
     }
+}
+
+.header__card__title{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 15px;
+    h5 {
+        color: $color-text;
+        font-weight: 500;
+    }
+}
+
+.close-icon{
+    width: 20px;
+    height: 20px;
+}
+
+.close-icon:hover {
+    color: $color-danger;
 }

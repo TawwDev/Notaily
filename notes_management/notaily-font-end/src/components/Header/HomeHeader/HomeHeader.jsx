@@ -1,8 +1,8 @@
 import { FaBell, FaRegCircleQuestion, FaPen } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./HomeHeader.scss";
 import CreateNote from "../../CreateNote/CreateNote";
-
+import { IoMdClose } from "react-icons/io";
 function HomeHeader() {
     const [menuStatus, setMenuStatus] = useState(false);
     const [searchStatus, setSearchStatus] = useState(false);
@@ -20,6 +20,13 @@ function HomeHeader() {
         setCreateNoteStatus(!createNoteStatus);
     }
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            setMenuStatus(false);
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+    }, [menuStatus]);
+
     return (
         <>
             <header className="header">
@@ -34,10 +41,14 @@ function HomeHeader() {
                     {menuStatus ?
                         <div className="header__dropdown-menu">
                             <div className="header__card">
+                                <div className="header__card__title">
+                                    <h5>Notification</h5>
+                                    <IoMdClose className="close-icon" onClick={() => setMenuStatus(false)}/>
+                                </div>
                                 <div className="header__sub-card">
                                     <img src={"https://api.dicebear.com/9.x/croodles/svg?seed=default"}></img>
                                     <div className="header__info">
-                                        <h4>Name</h4>
+                                        <h5>Name</h5>
                                         <span>Muon ket ban voi ban</span>
                                         <div className="dropdown-menu__action">
                                             <button className="dropdown-menu__action__button--accept">Agree</button>
@@ -50,10 +61,10 @@ function HomeHeader() {
                     }
                 </div>
             </header>
-            
-            {createNoteStatus ? <CreateNote/> : ""}
-                
-            
+
+            {createNoteStatus ? <CreateNote /> : ""}
+
+
         </>
     )
 }

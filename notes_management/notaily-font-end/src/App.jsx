@@ -13,6 +13,8 @@ import ForgotPassWordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import ProfileLayout from "./components/layout/ProfileLayout/ProfileLayout";
 import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
+import GuessLayout from "./components/layout/GuessLayout/GuessLayout";
+import GuessPage from "./pages/GuessPage/GuessPage";
 
 function App() {
   return (
@@ -23,9 +25,14 @@ function App() {
         <Route path="forgot-password" element={<ForgotPassWordPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
 
+        {/* ====================== IndexLayout ====================== */}
+        <Route path="/" element={<GuessLayout />}>
+          <Route index element={<GuessPage />} />
+          
+        </Route>
 
         {/* ====================== IndexLayout ====================== */}
-        <Route path="/" element={<IndexLayout />}>
+        <Route path="/home-page" element={<IndexLayout />}>
           <Route index element={<HomePage />} />
           {/* <Route path="create-note" element={<CreateNote />} /> */}
           <Route path="project-plans" element={<ProjectPlansPage />} />

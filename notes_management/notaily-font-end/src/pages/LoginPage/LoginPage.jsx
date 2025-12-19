@@ -34,7 +34,7 @@ function LoginPage() {
                 return;
             }
             console.log("Login success", response);
-            setTimeout(() => navigate("/"), 1000);
+            setTimeout(() => navigate("/home-page"), 1000);
         } catch (err) {
             alert.error("Sai thông tin đăng nhập");
         }

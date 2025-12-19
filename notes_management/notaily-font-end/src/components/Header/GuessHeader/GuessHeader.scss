@@ -1,0 +1,84 @@
+$color-white: #ffffff;
+$color-background: #EDF0F7;
+$color-sidebar-bg: #ffffff;
+$color-primary: #20405E;
+$color-text: #000000;
+$color-text-light: #848486;
+$color-border: #e9ecef;
+$color-hover: #f7f8fa;
+$color-active: #5e72e4;
+$color-success: #2dce89;
+$color-hover-success: #228b22;
+$color-warning: #fb6340;
+$color-info: #11cdef;
+$color-danger: #ec5353;
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.custom-tooltip-width {
+    min-width: 400px !important;
+    max-width: 600px !important;
+}
+
+.header__title {
+    display: flex;
+    align-items: center;
+
+    img {
+        width: 30px;
+        height: 30px;
+    }
+
+    span {
+        color: $color-text;
+    }
+}
+
+.header__title .introjs-tooltiptext {
+    padding: 10px !important;
+}
+
+.header__icon--user {
+    position: relative;
+}
+
+.header__dropdown-user {
+    position: absolute;
+    top: 150%;
+    right: 0;
+    border: 1px solid $color-border;
+    background-color: $color-white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    min-width: 100px;
+    border-radius: 8px;
+
+    &__item {
+
+        a {
+            text-decoration: none;
+            color: $color-text;
+            padding: 5px 12px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        a:hover {
+            background-color: #D0D0D0;
+        }
+    }
+
+    &__icon {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+    }
+}
+
+
+
