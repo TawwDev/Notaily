@@ -5,21 +5,17 @@ export const apiAuth = (() => {
 
     //register
     const signUp = async (username, password, email, firstName, lastName) => {
-        try {
-            const response = await axios.post(
-                API_URL + "/auth/sign-up",
-                {
-                    username: username,
-                    password: password,
-                    email: email,
-                    firstName: firstName,
-                    lastName: lastName
-                }
-            );
-            return response.data;
-        } catch (error) {
-            alert(error);
-        }
+        const response = await axios.post(
+            API_URL + "/auth/sign-up",
+            {
+                username: username,
+                password: password,
+                email: email,
+                firstName: firstName,
+                lastName: lastName
+            }
+        );
+        return response.data;
     }
 
     const logIn = async (usernameOrEmail, password) => {

@@ -5,14 +5,17 @@ import "./LoginPage.scss";
 import { apiAuth } from "../../api/AuthenticationApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isEmpty, isValidUsername, isValidEmail, isValidPassword } from "../../util/validator";
+import { isEmpty, isValidUsername, isValidEmail } from "../../util/validator";
 import { useForm } from "react-hook-form";
-
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 function LoginPage() {
-    const [form, setForm] = useState({ username: "", password: "" });
     const [apiError, setApiError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     const {
         register,
         handleSubmit,
@@ -62,26 +65,44 @@ function LoginPage() {
                                                 required: "Vui lòng nhập tên đăng nhập.",
                                                 validate: {
                                                     notEmpty: (value) => !isEmpty(value) || "Không được chứa chỉ khoảng trắng",
-                                                    validFormat: (value) => 
+                                                    validFormat: (value) =>
                                                         (isValidEmail(value) || isValidUsername(value)) || "Vui lòng nhập đúng định dạng Email hoặc chỉ chứa kí tự."
                                                 }
                                             })}
                                         />
-                                        {errors.username && <small className="text-danger">{errors.username.message}</small>}
-                                    </div>
-                                    <div className="mb-3">
-                                        <input
-                                            type="password"
-                                            className={`login-content__password form-control ${errors.password ? "is-invalid" : ""}`}
-                                            placeholder="Password"
-                                            {...register("password", {
-                                                required: "Vui lòng nhập mật khẩu"
-                                            })}
-                                        />
-                                        {errors.password && <small className="text-danger">{errors.password.message}</small>}
-                                        {apiError && <small className="text-danger">{apiError}</small>}
+                                        <div>
+                                            {errors.username && <small className="text-danger">{errors.username.message}</small>}
+                                        </div>
                                     </div>
 
+                                    <div className="mb-3">
+                                        <div className="password-wrapper">
+                                            <input
+                                                type={showPassword ? 'text' : 'password'}
+                                                className={`form-control ${errors.password ? "password-invalid" : ""}`}
+                                                placeholder="Password"
+                                                {...register("password", {
+                                                    required: "Vui lòng nhập mật khẩu"
+                                                })}
+                                            >
+                                            </input>
+                                            <button
+                                                className="btn btn-show-pass"
+                                                type="button"
+                                                onClick={togglePasswordVisibility}
+                                            >
+                                                {showPassword ? (
+                                                    <IoEyeOffOutline />
+                                                ) : (
+                                                    <IoEyeOutline />
+                                                )}
+                                            </button>
+                                        </div>
+                                        <div>
+                                            {errors.password && <small className="text-danger">{errors.password.message}</small>}
+                                            {apiError && <small className="text-danger">{apiError}</small>}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="login-content__action">
