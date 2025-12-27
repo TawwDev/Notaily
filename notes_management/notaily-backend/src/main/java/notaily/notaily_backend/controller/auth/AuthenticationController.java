@@ -15,10 +15,10 @@ import notaily.notaily_backend.dto.response.auth.IntrospectResponse;
 import notaily.notaily_backend.entity.User;
 import notaily.notaily_backend.service.auth.AuthenticationService;
 import notaily.notaily_backend.service.auth.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -30,17 +30,31 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/log-in")
-    ApiResponse<AuthenticationResponse> authenticateUser(@RequestBody AuthenticationRequest request) {
+    ResponseEntity<ApiResponse<AuthenticationResponse>> authenticateUser(@RequestBody AuthenticationRequest request) {
         var result = authenticationService.authenticate(request);
-        return ApiResponse.<AuthenticationResponse>builder()
-                .code(201)
-                .result(result)
+
+        ResponseCookie jwtCookie = ResponseCookie.from("accessToken", result.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .sameSite("Lax")
                 .build();
+
+        result.setToken(null);
+
+        return ResponseEntity.status(201)
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(ApiResponse.<AuthenticationResponse>builder()
+                        .code(201)
+                        .result(result)
+                        .build()
+                );
     }
 
     @PostMapping("/introspect")
-    ApiResponse<IntrospectResponse> authenticateUser(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
-        var result = authenticationService.introspect(request);
+    ApiResponse<IntrospectResponse> authenticateUser(@CookieValue(name = "accessToken", required = false) String token) throws ParseException, JOSEException {
+        var result = authenticationService.introspect(IntrospectRequest.builder().token(token).build());
         return ApiResponse.<IntrospectResponse>builder()
                 .code(201)
                 .result(result)
@@ -56,12 +70,23 @@ public class AuthenticationController {
     }
 
     @PostMapping("/log-out")
-    ApiResponse<Void> logoutUser(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
-        authenticationService.logout(request);
-        return ApiResponse.<Void>builder()
-                .code(201)
-                .message("Successfully logged out!")
+    ResponseEntity<ApiResponse<Void>> logoutUser(@CookieValue(name = "accessToken", required = false) String token) throws ParseException, JOSEException {
+        ResponseCookie cleanCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
                 .build();
+
+        authenticationService.logout(LogoutRequest.builder().token(token).build());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cleanCookie.toString())
+                .body(ApiResponse.<Void>builder()
+                        .code(201)
+                        .message("Successfully logged out!")
+                        .build());
     }
 
 }

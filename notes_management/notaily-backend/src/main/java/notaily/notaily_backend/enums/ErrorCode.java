@@ -22,6 +22,15 @@ public enum ErrorCode {
     UNAUTHENTICATED(401, "Unauthenticated!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403, "You do not have permission!", HttpStatus.FORBIDDEN),
     ROLE_NOT_FOUND(404, "Role not found!", HttpStatus.NOT_FOUND),
+
+    //Notebook
+    NOTEBOOK_NOT_FOUND(404, "Notebook not found!", HttpStatus.NOT_FOUND),
+    NOTEBOOK_EXISTS(409, "Notebook already exists!", HttpStatus.BAD_REQUEST),
+
+    // Cloudinary
+    FILE_SIZE_ERROR(400, "Max file size is 2MB", HttpStatus.BAD_REQUEST),
+    FILE_PATTERN_ERROR(400, "Only jpg, png, gif, bmp files are allowed", HttpStatus.BAD_REQUEST),
+    FILE_UPLOAD_ERROR(400, "File upload error!", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

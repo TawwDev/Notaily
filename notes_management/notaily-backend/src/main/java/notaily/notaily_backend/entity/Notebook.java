@@ -19,12 +19,14 @@ public class Notebook {
     private String id;
 
     private String name;
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdBy", nullable = false)
     private User createdBy;
 
     private LocalDate createdAt;
+    private LocalDate updatedAt;
     private boolean isDeleted = false;
 
     @OneToMany (mappedBy = "notebook", cascade = CascadeType.ALL, orphanRemoval = true)
