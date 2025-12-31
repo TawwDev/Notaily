@@ -5,14 +5,14 @@ import "./IndexLayout.scss";
 import HomeHeader from "../../Header/HomeHeader/HomeHeader";
 
 
-function IndexLayout() {
+function IndexLayout({setIsLogin}) {
     
 
     return (
         <>
             <div className="layout-default">
                 <div className="layout-side-bar"></div>
-                <SideBar />
+                <SideBar setIsLogin={setIsLogin}/>
                 <div className="layout-default__content">
                     <HomeHeader />
                     <main className="layout-default__main">

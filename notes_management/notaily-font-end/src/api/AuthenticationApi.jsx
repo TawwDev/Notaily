@@ -20,7 +20,7 @@ export const apiAuth = (() => {
 
     const logIn = async (usernameOrEmail, password) => {
         try {
-            const reponse = await axios.post(
+            const response = await axios.post(
                 API_URL + "/auth/log-in",
                 {
                     username: usernameOrEmail,
@@ -28,7 +28,7 @@ export const apiAuth = (() => {
                 },
                 { withCredentials: true }
             );
-            return reponse.data;
+            return response.data;
         } catch (error) {
             console.log(error);
         }
@@ -36,29 +36,29 @@ export const apiAuth = (() => {
 
     const logOut = async () => {
         try {
-            const reponse = await axios.post(
+            const response = await axios.post(
                 API_URL + "/auth/log-out",
                 {},
                 { withCredentials: true }
             );
 
-            return reponse.data;
+            return response.data;
         } catch (error) {
-            alert(error);
+            console.log(error);
         }
     }
 
-    const introspect = async (token) => {
+    const introspect = async () => {
         try {
-            const reponse = await axios.post(
+            const response = await axios.post(
                 API_URL + "/auth/introspect",
-                { token: token },
+                {},
                 { withCredentials: true }
             );
-
-            return reponse.data;
+            return response.data;
         } catch (error) {
-            alert(error);
+            console.log(error);
+            return { result: { valid: false } };
         }
     }
 

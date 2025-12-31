@@ -8,7 +8,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { ImExit } from "react-icons/im";
 import { apiAuth } from '../../api/AuthenticationApi';
 import { useNavigate } from "react-router-dom";
-function SideBar() {
+function SideBar({setIsLogin}) {
     const [noteBookStatus, setNoteBookStatus] = useState(false);
     const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ function SideBar() {
         try {
             const response = await apiAuth.logOut();
             console.log("Logout success", response);
-
+            setIsLogin(false);
             setTimeout(() => navigate("/login"), 1000);
         } catch (err) {
             alert.error("Logout fail");
@@ -39,7 +39,7 @@ function SideBar() {
             <div className="layout-default__sidebar">
                 <aside className="sidebar">
                     <div className='sidebar__logo'>
-                        <NavLink to={"/"} className={"sidebar__logo--flex-row"}>
+                        <NavLink to={"/home-page"} className={"sidebar__logo--flex-row"}>
                             <img src={logo}></img>
                             <h4>Notaily</h4>
                         </NavLink>
@@ -76,7 +76,7 @@ function SideBar() {
                     <nav className="sidebar__nav">
                         <ul className="sidebar__menu">
                             <li className="sidebar__item" >
-                                <NavLink to="/" className={navLinkOptionLinkActive}>
+                                <NavLink to="/home-page" className={navLinkOptionLinkActive}>
                                     <FaPenToSquare />
                                     <span>Your Notes</span>
                                 </NavLink>
@@ -90,19 +90,19 @@ function SideBar() {
                                 {noteBookStatus ?
                                     <ul className="sidebar__submenu">
                                         <li className="sidebar__subitem">
-                                            <NavLink to="/project-plans" className={navLinkOptionSubLinkActive}>
+                                            <NavLink to="/home-page/project-plans" className={navLinkOptionSubLinkActive}>
                                                 <FaNoteSticky />
                                                 <span>Project Plans</span>
                                             </NavLink>
                                         </li>
                                         <li className="sidebar__subitem">
-                                            <NavLink to="/routine-notes" className={navLinkOptionSubLinkActive}>
+                                            <NavLink to="/home-page/routine-notes" className={navLinkOptionSubLinkActive}>
                                                 <FaNoteSticky />
                                                 <span>Routine Notes</span>
                                             </NavLink>
                                         </li>
                                         <li className="sidebar__subitem">
-                                            <NavLink to="/planning" className={navLinkOptionSubLinkActive}>
+                                            <NavLink to="/home-page/planning" className={navLinkOptionSubLinkActive}>
                                                 <FaNoteSticky />
                                                 <span>Planning</span>
                                             </NavLink>
@@ -112,14 +112,14 @@ function SideBar() {
                             </li>
 
                             <li className="sidebar__item">
-                                <NavLink to="/reminder" className={navLinkOptionLinkActive}>
+                                <NavLink to="/home-page/reminder" className={navLinkOptionLinkActive}>
                                     <FaRegClock />
                                     <span>Reminder</span>
                                 </NavLink>
                             </li>
 
                             <li className="sidebar__item">
-                                <NavLink to="/bin" className={navLinkOptionLinkActive}>
+                                <NavLink to="/home-page/bin" className={navLinkOptionLinkActive}>
                                     <FaRegTrashCan />
                                     <span>Bin</span>
                                 </NavLink>

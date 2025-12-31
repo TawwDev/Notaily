@@ -17,6 +17,7 @@ import { TbCode } from "react-icons/tb";
 import "./TipTapCreateNote.scss";
 import { useState } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import Image from '@tiptap/extension-image';
 
 
 const MenuBar = ({ editor, isOpenTextChange, setOpenTextChange }) => {
@@ -170,18 +171,46 @@ const MenuBar = ({ editor, isOpenTextChange, setOpenTextChange }) => {
     );
 };
 
-export const Tiptap = ({ setDescription }) => {
+export const Tiptap = ({ setDescription, initialContent}) => {
     const [isOpenTextChange, setOpenTextChange] = useState(false);
 
     const editor = useEditor({
         extensions: [
             StarterKit,
             Underline,
+            Image.configure({
+                inline: true,
+                allowBase64: true, //Cho phép dán ảnh dưới dạng base64
+            }),
             Placeholder.configure({
                 placeholder: 'Start typing or paste an image...',
             }),
         ],
-        content: ``,
+        content: initialContent || ``, // Đổ dữ liệu từ DB vào đây
+
+        editorProps: {
+            handlePaste: (view, event) => {
+                const items = Array.from(event.clipboardData?.items || []);
+                const imageItem = items.find(item => item.type.startsWith('image'));
+
+                if (imageItem) {
+                    const file = imageItem.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        view.dispatch(
+                            view.state.tr.replaceSelectionWith(
+                                view.state.schema.nodes.image.create({
+                                    src: e.target.result,
+                                })
+                            )
+                        );
+                    };
+                    reader.readAsDataURL(file);
+                    return true; // Ngăn chặn hành vi paste mặc định của trình duyệt
+                }
+                return false;
+            },
+        },
 
         onUpdate: ({ editor }) => {
             const html = editor.getHTML();

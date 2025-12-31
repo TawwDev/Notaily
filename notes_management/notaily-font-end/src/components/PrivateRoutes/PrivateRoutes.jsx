@@ -12,9 +12,8 @@ const PrivateRoutes = () => {
                 setIsLogin(false);
                 return;
             }
-
             try {
-                const response = await apiAuth.introspect({ token: accessToken });
+                const response = await apiAuth.introspect();
 
                 console.log("Introspect result:", response); 
 

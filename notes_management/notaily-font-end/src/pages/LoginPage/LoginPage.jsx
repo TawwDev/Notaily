@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { isEmpty, isValidUsername, isValidEmail } from "../../util/validator";
 import { useForm } from "react-hook-form";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-function LoginPage() {
+function LoginPage({ setIsLogin }) {
     const [apiError, setApiError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -34,6 +34,7 @@ function LoginPage() {
                 return;
             }
             console.log("Login success", response);
+            setIsLogin(true);
             setTimeout(() => navigate("/home-page"), 1000);
         } catch (err) {
             alert.error("Sai thông tin đăng nhập");
