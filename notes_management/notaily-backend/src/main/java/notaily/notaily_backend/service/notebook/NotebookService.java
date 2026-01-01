@@ -15,8 +15,12 @@ import notaily.notaily_backend.repository.NotebookRepository;
 import notaily.notaily_backend.repository.UserRepository;
 import notaily.notaily_backend.service.auth.UserService;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,8 +38,9 @@ public class NotebookService {
         return notebookMapper.NotebookToNotebookResponse(notebook);
     }
 
-    public List<NotebookResponse> getAllNotebooks(){
-        List<Notebook> notebooks = notebookRepository.findAll();
+    public List<NotebookResponse> getAllNotebooks(Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Notebook> notebooks = notebookRepository.findAllByUsernameCustom(username, pageable).getContent();
         return notebookMapper.NotebookToNotebookResponseList(notebooks);
     }
 
@@ -63,5 +68,10 @@ public class NotebookService {
     public void deleteNotebook(String id) {
         Notebook notebook = notebookRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOTEBOOK_NOT_FOUND));
         notebookRepository.deleteById(notebook.getId());
+    }
+
+    public long getTotalNotebooks() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return  notebookRepository.countByUsername(username);
     }
 }

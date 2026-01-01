@@ -1,5 +1,6 @@
 package notaily.notaily_backend.configuration;
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import notaily.notaily_backend.repository.InvalidatedTokenRepository;
 import notaily.notaily_backend.service.auth.AuthenticationService;
@@ -22,6 +23,7 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -42,6 +44,24 @@ public class SecurityConfig {
     private String signerKey;
 
     private final InvalidatedTokenRepository invalidatedTokenRepository;
+
+    /**
+     * Giải quyết Token từ Cookie
+     */
+    private BearerTokenResolver cookieBearerTokenResolver() {
+        return request -> {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("accessToken".equals(cookie.getName())) {
+                        return cookie.getValue();
+                    }
+                }
+            }
+            return null;
+        };
+    }
+
 
     /**
      * Cấu hình chuỗi filter bảo mật chính của Spring Security.
@@ -65,6 +85,7 @@ public class SecurityConfig {
                                 .decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
+                        .bearerTokenResolver(cookieBearerTokenResolver())
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
 

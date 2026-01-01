@@ -10,8 +10,11 @@ import notaily.notaily_backend.dto.response.notebook.NotebookResponse;
 import notaily.notaily_backend.entity.Notebook;
 import notaily.notaily_backend.mapper.NotebookMapper;
 import notaily.notaily_backend.service.notebook.NotebookService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -22,10 +25,21 @@ public class NotebookController {
     NotebookService notebookService;
 
     @GetMapping
-    public ApiResponse<List<NotebookResponse>> getAllNotebooks() {
+    public ApiResponse<List<NotebookResponse>> getAllNotebooks(
+            @RequestParam(required = false, defaultValue = "0") int pageNo,
+            @RequestParam(required = false, defaultValue = "8") int pageSize,
+            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false, defaultValue = "DESC") String sortDir
+    ) {
+        Sort sort = null;
+        if(sortDir.equalsIgnoreCase("ASC")) {
+            sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
         return ApiResponse.<List<NotebookResponse>>builder()
                 .code(200)
-                .result(notebookService.getAllNotebooks())
+                .result(notebookService.getAllNotebooks(PageRequest.of(pageNo, pageSize, sort)))
                 .build();
     }
 
@@ -34,6 +48,14 @@ public class NotebookController {
         return ApiResponse.<NotebookResponse>builder()
                 .code(200)
                 .result(notebookService.getNotebookById(id))
+                .build();
+    }
+
+    @GetMapping("/total-notebooks")
+    public ApiResponse<Long> getTotalNotebooks(){
+        return ApiResponse.<Long>builder()
+                .code(200)
+                .result(notebookService.getTotalNotebooks())
                 .build();
     }
 
