@@ -45,6 +45,74 @@ $radius-md: 20px;
             color: $text-light;
             cursor: pointer;
         }
+
+        .sort-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 240px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            z-index: 1000;
+            margin-top: 10px;
+
+            .sort-header {
+                padding: 0 20px 10px;
+                font-size: 12px;
+                font-weight: 700;
+                color: #a0aec0;
+                letter-spacing: 1px;
+            }
+
+            .sort-item {
+                display: flex;
+                align-items: center;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: all 0.2s;
+                gap: 15px;
+
+                &:hover {
+                    background-color: #f7fafc;
+                }
+
+                &.active {
+                    span {
+                        color: #3182ce;
+                        font-weight: 600;
+                    }
+
+                    .sort-icon-bg {
+                        background: #ebf8ff;
+                        color: #3182ce;
+                    }
+                }
+
+                .sort-icon-bg {
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                    background: #f1f5f9;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #64748b;
+                }
+
+                span {
+                    flex: 1;
+                    color: #4a5568;
+                    font-size: 14px;
+                }
+
+                .check-icon {
+                    color: #3182ce;
+                    font-size: 12px;
+                }
+            }
+        }
     }
 
     .btn-add {
@@ -231,7 +299,7 @@ $radius-md: 20px;
 
             &:focus {
                 box-shadow: 0 0 0 2px #8b5cf6;
-            }   
+            }
 
         }
     }

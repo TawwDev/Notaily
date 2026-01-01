@@ -3,15 +3,34 @@ import { API_URL } from "../util/constant";
 
 export const apiNotebook = (() => {
 
-    const getNotebooks = async () => {
+    const getNotebooks = async (page = 0, size = 8, by = "createdAt", dir = "DESC") => {
         try {
             const response = await axios.get(`${API_URL}/notebook`,
-                { withCredentials: true }
+                {
+                    params: {
+                        pageNo: page,   
+                        pageSize: size,
+                        sortBy: by,
+                        sortDir: dir
+                    },
+                    withCredentials: true
+                }
             );
             console.log(response.data.result)
             return response.data.result;
         } catch (error) {
             console.error("Error fetching notebooks:", error);
+        }
+    }
+
+    const getTotalNotebook = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/notebook/total-notebooks`,
+                { withCredentials: true }
+            );
+            return response.data.result;
+        } catch (error) {
+            console.error("Error fetching get total notebooks:", error);
         }
     }
 
@@ -79,7 +98,8 @@ export const apiNotebook = (() => {
         deleteNotebook,
         getNotebooks,
         updateNotebook,
-        uploadImageToCloudinary
+        uploadImageToCloudinary,
+        getTotalNotebook
     };
 
 })();

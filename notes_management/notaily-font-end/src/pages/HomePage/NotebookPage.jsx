@@ -3,18 +3,19 @@ import { CiSearch } from "react-icons/ci";
 import { LuSlidersHorizontal } from "react-icons/lu";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { CiClock1 } from "react-icons/ci";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdHistory, MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FiPlus } from "react-icons/fi";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
+import { TbAlphabetGreek } from "react-icons/tb";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { apiNotebook } from '../../api/NoteBookApi';
 import './NotebookDashboard.scss';
 import EditNotebook from '../../components/EditNotebook/EditNotebook';
-import { popupDelete } from '../../util/popups';
+import { popupDelete, popupError } from '../../util/popups';
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/src/sweetalert2.scss'
-
 
 const NotebookPage = () => {
     const PAGE_SIZE = 8;
@@ -23,21 +24,29 @@ const NotebookPage = () => {
     const [notebooks, setNotebooks] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedNotebook, setSelectedNotebook] = useState(null);
+    const [totalNumberPage, setTotalNumberpage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [sortConfig, setSortConfig] = useState({ sortBy: 'createdAt', sortDir: 'DESC' });
+    const [isSortOpen, setIsSortOpen] = useState(false);
 
     const fetchNotebooks = async () => {
-            try {
-                const response = await apiNotebook.getNotebooks();
-                setNotebooks(response || []);
-            } catch (error) {
+        try {
+            const response = await apiNotebook.getNotebooks(currentPage, PAGE_SIZE, sortConfig.sortBy, sortConfig.sortDir);
+            const totalNbResponse = await apiNotebook.getTotalNotebook();
+            setNotebooks(response || []);
+            const totalPage = Math.ceil(totalNbResponse / PAGE_SIZE);
+            setTotalNumberpage(totalPage);
+        } catch (error) {
 
-            }
-        };
+        }
+    };
+
     useEffect(() => {
         fetchNotebooks();
         const closeMenu = () => setOpenOptionId(null);
         window.addEventListener("click", closeMenu);
         return () => window.removeEventListener("click", closeMenu);
-    }, []);
+    }, [currentPage, sortConfig]);
 
     const handleNewNotebook = async () => {
         try {
@@ -55,6 +64,7 @@ const NotebookPage = () => {
         try {
             await apiNotebook.updateNotebook(id, { name });
             setNotebooks(notebooks.map(nb => nb.id === id ? { ...nb, isEditing: false } : nb));
+            fetchNotebooks();
         } catch (error) {
 
         }
@@ -91,13 +101,84 @@ const NotebookPage = () => {
         }
     }
 
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(prev => prev - 1);
+        } else {
+            popupError("Can't previous page!");
+        }
+    }
+
+    const handleNextPage = () => {
+        if (currentPage + 1 < totalNumberPage) {
+            setCurrentPage(next => next + 1);
+        } else {
+            popupError("Can't next page!");
+        }
+    }
+
+
     return (
         <div className="dashboard-container">
             <header className="dashboard-header">
                 <div className="search-wrapper">
                     <CiSearch className="search-icon" size={20} />
                     <input type="text" placeholder="Search notebooks, tags..." />
-                    <LuSlidersHorizontal className="filter-icon" size={20} />
+                    <div className="filter-container" style={{ position: 'relative' }}>
+                        <LuSlidersHorizontal
+                            className="filter-icon"
+                            size={20}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsSortOpen(!isSortOpen);
+                            }}
+                        />
+
+                        {isSortOpen && (
+                            <div className="sort-dropdown" onClick={(e) => e.stopPropagation()}>
+                                <div className="sort-header">SORT BY</div>
+
+                                <div
+                                    className={`sort-item ${sortConfig.sortBy === 'createdAt' && sortConfig.sortDir === 'DESC' ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setSortConfig({ sortBy: 'createdAt', sortDir: 'DESC' });
+                                        setIsSortOpen(false);
+                                        setCurrentPage(0);
+                                    }}
+                                >
+                                    <div className="sort-icon-bg"><CiClock1 size={18} /></div>
+                                    <span>Newest First</span>
+                                    {sortConfig.sortBy === 'createdAt' && sortConfig.sortDir === 'DESC' && <FaCheck className="check-icon" />}
+                                </div>
+
+                                <div
+                                    className={`sort-item ${sortConfig.sortBy === 'createdAt' && sortConfig.sortDir === 'ASC' ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setSortConfig({ sortBy: 'createdAt', sortDir: 'ASC' });
+                                        setIsSortOpen(false);
+                                        setCurrentPage(0);
+                                    }}
+                                >
+                                    <div className="sort-icon-bg"><MdHistory size={18} /></div>
+                                    <span>Oldest First</span>
+                                    {sortConfig.sortBy === 'createdAt' && sortConfig.sortDir === 'ASC' && <FaCheck className="check-icon" />}
+                                </div>
+
+                                <div
+                                    className={`sort-item ${sortConfig.sortBy === 'name' && sortConfig.sortDir === 'ASC' ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setSortConfig({ sortBy: 'name', sortDir: 'ASC' });
+                                        setIsSortOpen(false);
+                                        setCurrentPage(0);
+                                    }}
+                                >
+                                    <div className="sort-icon-bg"><TbAlphabetGreek size={18} /></div>
+                                    <span>Alphabetical (A-Z)</span>
+                                    {sortConfig.sortBy === 'name' && sortConfig.sortDir === 'ASC' && <FaCheck className="check-icon" />}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <button className="btn-add" onClick={handleNewNotebook}>
                     <FiPlus size={20} />
@@ -153,17 +234,20 @@ const NotebookPage = () => {
                 ))}
             </main>
 
-            <footer className="pagination">
-                <button className="pagi-btn"><FaChevronLeft size={20} /></button>
-                <span className="pagi-text">Page 1 of 5</span>
-                <button className="pagi-btn"><FaChevronRight size={20} /></button>
-            </footer>
+            {
+                totalNumberPage === 0 ? "" : <footer className="pagination">
+                    <button className="pagi-btn" onClick={handlePreviousPage}><FaChevronLeft size={20} /></button>
+                    <span className="pagi-text">Page {currentPage + 1} of {totalNumberPage}</span>
+                    <button className="pagi-btn" onClick={handleNextPage}><FaChevronRight size={20} /></button>
+                </footer>
+            }
+
 
             <EditNotebook
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 notebook={selectedNotebook}
-                onReload = {() => fetchNotebooks()}
+                onReload={() => fetchNotebooks()}
             />
         </div>
 
