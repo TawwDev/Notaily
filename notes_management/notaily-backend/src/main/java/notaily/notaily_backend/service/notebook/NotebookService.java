@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -38,15 +39,16 @@ public class NotebookService {
         return notebookMapper.NotebookToNotebookResponse(notebook);
     }
 
-    public List<NotebookResponse> getAllNotebooks(Pageable pageable) {
+    public List<NotebookResponse> getAllNotebooks(String search, Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Notebook> notebooks = notebookRepository.findAllByUsernameCustom(username, pageable).getContent();
+        String keyword = (search == null || search.trim().isEmpty()) ? null : search.trim();
+        List<Notebook> notebooks = notebookRepository.findAllByUsernameCustom(username, keyword, pageable).getContent();
         return notebookMapper.NotebookToNotebookResponseList(notebooks);
     }
 
     public NotebookResponse createNotebook (NotebookCreateRequest notebookCreateRequest) {
         Notebook notebook = notebookMapper.NotebookCreateRequestToNotebook(notebookCreateRequest);
-        LocalDate timeCreate = LocalDate.now();
+        LocalDateTime timeCreate = LocalDateTime.now();
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -59,7 +61,7 @@ public class NotebookService {
     public NotebookResponse updateNotebook(String id, NotebookUpdateRequest notebookUpdateRequest) {
         Notebook notebook = notebookRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOTEBOOK_NOT_FOUND));
         notebookMapper.updateNotebook(notebook, notebookUpdateRequest);
-        LocalDate timeUpdated = LocalDate.now();
+        LocalDateTime timeUpdated = LocalDateTime.now();
         notebook.setUpdatedAt(timeUpdated);
         notebookRepository.save(notebook);
         return notebookMapper.NotebookToNotebookResponse(notebook);
@@ -67,6 +69,9 @@ public class NotebookService {
 
     public void deleteNotebook(String id) {
         Notebook notebook = notebookRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOTEBOOK_NOT_FOUND));
+        if(notebook.isDefault()) {
+            throw new AppException(ErrorCode.NOTEBOOK_CAN_NOT_BE_DELETED);
+        }
         notebookRepository.deleteById(notebook.getId());
     }
 

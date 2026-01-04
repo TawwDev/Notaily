@@ -10,11 +10,10 @@ import notaily.notaily_backend.dto.response.notebook.NotebookResponse;
 import notaily.notaily_backend.entity.Notebook;
 import notaily.notaily_backend.mapper.NotebookMapper;
 import notaily.notaily_backend.service.notebook.NotebookService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -29,17 +28,18 @@ public class NotebookController {
             @RequestParam(required = false, defaultValue = "0") int pageNo,
             @RequestParam(required = false, defaultValue = "8") int pageSize,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-            @RequestParam(required = false, defaultValue = "DESC") String sortDir
+            @RequestParam(required = false, defaultValue = "DESC") String sortDir,
+            @RequestParam(required = false) String search
     ) {
-        Sort sort = null;
-        if(sortDir.equalsIgnoreCase("ASC")) {
-            sort = Sort.by(sortBy).ascending();
-        } else {
-            sort = Sort.by(sortBy).descending();
-        }
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable =  PageRequest.of(pageNo, pageSize, sort);
+
         return ApiResponse.<List<NotebookResponse>>builder()
                 .code(200)
-                .result(notebookService.getAllNotebooks(PageRequest.of(pageNo, pageSize, sort)))
+                .result(notebookService.getAllNotebooks(search, pageable))
                 .build();
     }
 

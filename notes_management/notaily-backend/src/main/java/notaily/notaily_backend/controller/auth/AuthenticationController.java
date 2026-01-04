@@ -12,6 +12,7 @@ import notaily.notaily_backend.dto.request.auth.UserCreationRequest;
 import notaily.notaily_backend.dto.response.ApiResponse;
 import notaily.notaily_backend.dto.response.auth.AuthenticationResponse;
 import notaily.notaily_backend.dto.response.auth.IntrospectResponse;
+import notaily.notaily_backend.dto.response.auth.UserResponse;
 import notaily.notaily_backend.entity.User;
 import notaily.notaily_backend.service.auth.AuthenticationService;
 import notaily.notaily_backend.service.auth.UserService;
@@ -62,8 +63,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-up")
-    ApiResponse<User> createUser(@RequestBody UserCreationRequest request) {
-        return ApiResponse.<User>builder()
+    ApiResponse<UserResponse> createUser(@RequestBody UserCreationRequest request) {
+        return ApiResponse.<UserResponse>builder()
                 .code(201)
                 .result(authenticationService.createUser(request))
                 .build();

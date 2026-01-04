@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +26,12 @@ public class Notebook {
     @JoinColumn(name = "createdBy", nullable = false)
     private User createdBy;
 
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private boolean isDeleted = false;
+
+    @Column(nullable = false)
+    private boolean isDefault = false;
 
     @OneToMany (mappedBy = "notebook", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();

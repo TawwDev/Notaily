@@ -26,6 +26,7 @@ public enum ErrorCode {
     //Notebook
     NOTEBOOK_NOT_FOUND(404, "Notebook not found!", HttpStatus.NOT_FOUND),
     NOTEBOOK_EXISTS(409, "Notebook already exists!", HttpStatus.BAD_REQUEST),
+    NOTEBOOK_CAN_NOT_BE_DELETED(409, "Notebook cannot be deleted!", HttpStatus.BAD_REQUEST),
 
     // Cloudinary
     FILE_SIZE_ERROR(400, "Max file size is 2MB", HttpStatus.BAD_REQUEST),

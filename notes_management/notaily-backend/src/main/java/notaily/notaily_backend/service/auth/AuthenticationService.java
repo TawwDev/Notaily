@@ -11,7 +11,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import notaily.notaily_backend.dto.request.auth.LogoutRequest;
+import notaily.notaily_backend.dto.response.auth.UserResponse;
 import notaily.notaily_backend.entity.InvalidatedToken;
+import notaily.notaily_backend.entity.Notebook;
 import notaily.notaily_backend.entity.Role;
 import notaily.notaily_backend.enums.ErrorCode;
 import notaily.notaily_backend.dto.request.auth.AuthenticationRequest;
@@ -24,6 +26,7 @@ import notaily.notaily_backend.enums.RoleEnum;
 import notaily.notaily_backend.exception.AppException;
 import notaily.notaily_backend.mapper.UserMapper;
 import notaily.notaily_backend.repository.InvalidatedTokenRepository;
+import notaily.notaily_backend.repository.NotebookRepository;
 import notaily.notaily_backend.repository.RoleRepository;
 import notaily.notaily_backend.repository.UserRepository;
 import org.hibernate.validator.internal.util.logging.Log;
@@ -35,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,6 +51,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    NotebookRepository notebookRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
@@ -194,7 +199,7 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
-    public User createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
@@ -210,7 +215,18 @@ public class AuthenticationService {
         HashSet<Role> roles = new HashSet<>();
         roles.add(userRole);
         user.setRoles(roles);
+        userRepository.save(user);
+        createDefaultNotebooks(user);
+        return userMapper.userToUserResponse(user);
+    }
 
-        return userRepository.save(user);
+    private void createDefaultNotebooks (User user) {
+        Notebook notebook = new Notebook();
+        notebook.setName("Sổ ghi chú của tôi");
+        notebook.setImage("https://res.cloudinary.com/dozyhynkf/image/upload/v1766827704/notaily/note/background-notebook-default.jpg_20251227162834.jpg");
+        notebook.setCreatedBy(user);
+        notebook.setCreatedAt(LocalDateTime.now());
+        notebook.setDefault(true);
+        notebookRepository.save(notebook);
     }
 }
